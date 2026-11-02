@@ -2,7 +2,7 @@
   "id": "wrecking-yard",
   "name": "Wrecking Yard",
   "tagline": "One ball. A yard full of trouble.",
-  "description": "A portrait Unity WebGL arcade game: drag to aim the wrecking ball, release to swing, and work your way through the yard. Real 3D rendering straight from the Unity player rather than a 2D stand-in, a 9:16 play area that scales to fit any screen, and mouse and touch controls. Nothing to install - the payload streams in behind a progress bar and the game runs entirely in the browser.",
+  "description": "A portrait Unity WebGL arcade game: drag to aim the wrecking ball, pull back for power, and release to swing. Real 3D rendering straight from the Unity player rather than a 2D stand-in, a 9:16 play area that scales to fit any screen, and mouse and touch controls. Nothing to install - the payload streams in behind a progress bar and the game runs entirely in the browser.",
   "categories": ["Arcade", "Physics"],
   "runtime": "Unity WebGL",
   "version": "0.1.0",
@@ -14,20 +14,20 @@
   "repoUrl": "https://github.com/jd4rider/wrecking-yard-web",
   "releasesUrl": "https://github.com/jd4rider/wrecking-yard-web/releases",
   "downloads": [],
-  "cover": { "from": "#f59e0b", "to": "#3f1d0b", "emoji": "\u{1F6A7}" },
+  "cover": { "from": "#f59e0b", "to": "#3f1d0b", "emoji": "🚧" },
   "highlights": [
     "Native Unity WebGL build - real 3D rendering, not a 2D stand-in",
-    "Drag to aim, release to swing: one ball, one yard at a time",
+    "Drag to aim and pull back for power, release to swing",
+    "Yards with a demolition target and a limited number of swings",
     "Portrait 9:16 play area, scaled to fit phones, tablets and desktops",
-    "Mouse and touch input, no install and no download",
-    "Served from GitHub Pages, with the payload checked at deploy time"
+    "Mouse and touch input, no install and no download"
   ],
   "howToPlay": [
     "Open the game and wait for the Unity progress bar - the first load streams about 56 MB",
-    "Drag anywhere to aim the ball, then release to swing",
-    "Play continues the current yard; Levels lets you pick another",
+    "Drag to aim the ball and pull back for power, then release to swing",
+    "Reach the demolition target before your swings run out",
     "Use the fullscreen button in the footer for the whole 9:16 view"
   ],
-  "levels": "Yards and levels \u00b7 Unity WebGL 0.1.0",
+  "levels": "Yards and levels · Unity WebGL 0.1.0",
   "saveKey": ""
 }
