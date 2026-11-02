@@ -1,6 +1,6 @@
 # Deployment
 
-Target: **<https://jd4rider.github.io/wrecking-yard/play/>**, listed in the Little
+Target: **<https://jd4rider.github.io/wrecking-yard-web/play/>**, listed in the Little
 Joy Arcade catalogue as `wrecking-yard`.
 
 ## How publishing works
@@ -15,7 +15,7 @@ Pages must have **Build and deployment → Source: GitHub Actions**. That is set
 once per repository:
 
 ```bash
-gh api -X POST repos/jd4rider/wrecking-yard/pages -f build_type=workflow
+gh api -X POST repos/jd4rider/wrecking-yard-web/pages -f build_type=workflow
 ```
 
 (Run it again with `-X PUT` if the repository already has Pages configured.)
@@ -24,9 +24,9 @@ gh api -X POST repos/jd4rider/wrecking-yard/pages -f build_type=workflow
 
 | What | URL |
 | --- | --- |
-| Game | `https://jd4rider.github.io/wrecking-yard/play/` |
-| Cover | `https://jd4rider.github.io/wrecking-yard/` |
-| Repo | `https://github.com/jd4rider/wrecking-yard` |
+| Game | `https://jd4rider.github.io/wrecking-yard-web/play/` |
+| Cover | `https://jd4rider.github.io/wrecking-yard-web/` |
+| Repo | `https://github.com/jd4rider/wrecking-yard-web` |
 
 The arcade probes `preferredPlayUrl` and falls back to `playUrl` when the host is
 unreachable. No `preferredPlayUrl` is set for this game because
@@ -55,9 +55,9 @@ credentials; it is never committed.
 ## Verifying a deploy
 
 ```bash
-gh run list -R jd4rider/wrecking-yard --limit 3
-curl -sI https://jd4rider.github.io/wrecking-yard/play/          # 200 text/html
-curl -sI https://jd4rider.github.io/wrecking-yard/play/Build/WebGL.wasm  # 200 application/wasm, no Content-Encoding
+gh run list -R jd4rider/wrecking-yard-web --limit 3
+curl -sI https://jd4rider.github.io/wrecking-yard-web/play/          # 200 text/html
+curl -sI https://jd4rider.github.io/wrecking-yard-web/play/Build/WebGL.wasm  # 200 application/wasm, no Content-Encoding
 ```
 
 A green workflow only proves the files were uploaded. Open the URL and confirm

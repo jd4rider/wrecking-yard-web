@@ -3,8 +3,8 @@
 A Unity WebGL build served from GitHub Pages as part of
 [Little Joy Arcade](https://littlejoyarcade.site).
 
-- **Play:** <https://jd4rider.github.io/wrecking-yard/play/>
-- **Cover page:** <https://jd4rider.github.io/wrecking-yard/>
+- **Play:** <https://jd4rider.github.io/wrecking-yard-web/play/>
+- **Cover page:** <https://jd4rider.github.io/wrecking-yard-web/>
 
 ## What is in here
 
