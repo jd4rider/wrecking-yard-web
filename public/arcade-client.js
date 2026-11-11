@@ -291,7 +291,12 @@
       var local = snapshot()
       var localHash = hash(JSON.stringify(local))
       var hasLocalKeys = Object.keys(local).length > 0
-      var dirty = meta ? localHash !== meta.hash : hasLocalKeys
+      // Having local keys is not the same as having new edits. On a first sync
+      // (no meta for this device) the cloud copy wins, so a device that had
+      // played before signing in can no longer publish its older save over a
+      // newer one from another device. Only a device that changed since its
+      // last sync is dirty.
+      var dirty = meta ? localHash !== meta.hash : false
 
       if (dirty) {
         // This device has changes (or the first save on it): publish them.
