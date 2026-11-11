@@ -109,9 +109,17 @@
   // Tell the portal what this game did, so signing in (or out) here updates the
   // header on littlejoyarcade.site instead of leaving two separate accounts.
   function notifyPortal() {
-    if (!portalOrigin || window.parent === window) return
+    if (!portalOrigin) return
+    var payload = { type: 'lja:auth', gameId: GAME_ID, session: loadSession() }
     try {
-      window.parent.postMessage({ type: 'lja:auth', gameId: GAME_ID, session: loadSession() }, portalOrigin)
+      if (window.parent !== window) window.parent.postMessage(payload, portalOrigin)
+    } catch (error) {
+      /* ignore */
+    }
+    // A game opened with "Open in new tab" is not embedded, so the portal is
+    // its opener rather than its parent. Keep it in step too.
+    try {
+      if (window.opener && !window.opener.closed) window.opener.postMessage(payload, portalOrigin)
     } catch (error) {
       /* ignore */
     }
@@ -143,9 +151,19 @@
       portalOrigin = event.origin
       adoptSession(event.data.session || null)
     })
+    var ready = { type: 'lja:ready', gameId: GAME_ID, configured: CONFIGURED }
     if (window.parent !== window) {
       try {
-        window.parent.postMessage({ type: 'lja:ready', gameId: GAME_ID, configured: CONFIGURED }, '*')
+        window.parent.postMessage(ready, '*')
+      } catch (error) {
+        /* ignore */
+      }
+    }
+    // Same handshake for a tab the portal opened: the opener answers with the
+    // signed-in session, which this origin then keeps in localStorage.
+    if (window.opener && !window.opener.closed) {
+      try {
+        window.opener.postMessage(ready, '*')
       } catch (error) {
         /* ignore */
       }
