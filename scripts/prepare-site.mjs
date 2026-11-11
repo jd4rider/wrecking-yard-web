@@ -142,6 +142,27 @@ async function main() {
   }
   if (!html.includes(accountTag)) throw new Error('site/play/index.html is missing the account tag')
 
+
+  // 4c. Unity save bridge. Unity keeps saves in its own `/idbfs` filesystem, so the
+  //     page mirrors it for the arcade client. A Unity re-export replaces
+  //     index.html, so this is the step that fails loudly if the tag goes missing.
+  const unityFrom = join(publicDir, 'arcade-unity.js')
+  const unityInfo = await stat(unityFrom).catch(() => null)
+  if (!unityInfo?.isFile()) throw new Error('missing public/arcade-unity.js')
+  await cp(unityFrom, join(play, 'arcade-unity.js'))
+
+  const unityTag = `<script src="./arcade-unity.js" data-game-id="${GAME_ID}"></script>`
+  if (!html.includes(unityTag)) {
+    const factory = html.indexOf('createUnityInstance(')
+    const templateTag = factory === -1 ? -1 : html.lastIndexOf('<script', factory)
+    if (templateTag === -1) throw new Error('index.html has no Unity template script to put the save bridge before')
+    html = html.slice(0, templateTag) + unityTag + '\n  ' + html.slice(templateTag)
+  }
+  if (!html.includes(unityTag)) throw new Error('site/play/index.html is missing the Unity save bridge')
+  if (html.indexOf(unityTag) > html.indexOf('createUnityInstance(')) {
+    throw new Error('the Unity save bridge must load before the template script')
+  }
+
   await writeFile(indexPath, html)
 
   await writeFile(join(site, 'index.html'), LANDING)
