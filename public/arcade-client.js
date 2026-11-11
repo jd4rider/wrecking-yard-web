@@ -32,6 +32,27 @@
   var META_KEY = 'lja:mirror:' + GAME_ID
   var EXCLUDE = /^(lja:|sb-|supabase\.)/
 
+  // Games hosted on the same origin share one localStorage (every github.io
+  // build lives under jd4rider.github.io), so mirroring every key uploads
+  // other games' saves and lets one game's sync overwrite another's. Only
+  // mirror this game's own keys: declared with data-save-keys / LJA_SAVE_KEYS,
+  // or named after the game (`<id>-save...`, dashes optional).
+  var SAVE_KEYS = (function () {
+    var raw = (script && script.dataset.saveKeys) || window.LJA_SAVE_KEYS || ''
+    var list = Array.isArray(raw) ? raw : String(raw).split(',')
+    return list
+      .map(function (key) {
+        return String(key).trim()
+      })
+      .filter(Boolean)
+  })()
+  var COMPACT_ID = GAME_ID.replace(/-/g, '')
+
+  function ownKey(key) {
+    if (SAVE_KEYS.length) return SAVE_KEYS.indexOf(key) !== -1
+    return key.indexOf(GAME_ID + '-') === 0 || key.indexOf(COMPACT_ID + '-') === 0
+  }
+
   var statusText = 'Not signed in'
   var root = null
   var ui = {}
@@ -167,7 +188,7 @@
     try {
       for (var i = 0; i < localStorage.length; i += 1) {
         var key = localStorage.key(i)
-        if (!key || EXCLUDE.test(key)) continue
+        if (!key || EXCLUDE.test(key) || !ownKey(key)) continue
         out[key] = localStorage.getItem(key)
       }
     } catch (error) {
@@ -298,8 +319,9 @@
       // last sync is dirty.
       var dirty = meta ? localHash !== meta.hash : false
 
-      if (dirty) {
-        // This device has changes (or the first save on it): publish them.
+      if (dirty && hasLocalKeys) {
+        // This device has changes: publish them. Never push an empty snapshot,
+        // which would replace the cloud copy with nothing.
         var pushed = await pushSnapshot(local)
         statusText = pushed ? 'Saved to the cloud' : 'Could not reach the cloud'
         render()
