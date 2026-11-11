@@ -163,6 +163,21 @@ async function main() {
     throw new Error('the Unity save bridge must load before the template script')
   }
 
+  // 4d. Persist every write. Unity leaves `autoSyncPersistentDataPath` off by default,
+  //     so PlayerPrefs and files under persistentDataPath only reach IndexedDB when the
+  //     game flushes by hand - the bridge would then see an empty save for the whole
+  //     session and the cloud row would never fill. With it on, Unity syncs on every
+  //     file change, so progress is in `/idbfs` for the next poll and survives a hard
+  //     close. A Unity re-export replaces index.html, so fail loudly if it goes missing.
+  const autoSync = /^\s*config\.autoSyncPersistentDataPath\s*=\s*true/m
+  if (!autoSync.test(html)) {
+    const factoryAt = html.indexOf('createUnityInstance(')
+    if (factoryAt === -1) throw new Error('index.html has no createUnityInstance call to put the autosync flag before')
+    const lineStart = html.lastIndexOf('\n', factoryAt) + 1
+    html = html.slice(0, lineStart) + '        config.autoSyncPersistentDataPath = true;\n' + html.slice(lineStart)
+  }
+  if (!autoSync.test(html)) throw new Error('site/play/index.html is missing the persistent-data autosync flag')
+
   await writeFile(indexPath, html)
 
   await writeFile(join(site, 'index.html'), LANDING)
